@@ -20,11 +20,11 @@ export function StepIndicator({ status }: StepIndicatorProps) {
   // If terminal error state
   if (status === "rejected" || status === "cancelled") {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 flex items-center justify-between">
+      <div className="bg-red-950/30 border border-red-500/20 rounded-xl p-3 text-sm text-red-300 flex items-center justify-between">
         <span className="font-medium">
           {status === "rejected" ? "Request was declined by owner" : "Request was cancelled"}
         </span>
-        <span className="text-xs uppercase tracking-wider font-semibold text-red-600 bg-red-100 px-2 py-0.5 rounded">
+        <span className="text-xs uppercase tracking-wider font-semibold text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
           {status}
         </span>
       </div>
@@ -56,13 +56,13 @@ export function StepIndicator({ status }: StepIndicatorProps) {
     <div className="w-full py-2">
       {/* Mobile simplified bar */}
       <div className="block sm:hidden">
-        <div className="flex items-center justify-between text-xs font-medium text-gray-600 mb-1.5">
+        <div className="flex items-center justify-between text-xs font-medium text-slate-400 mb-1.5">
           <span>Step {Math.min(currentIndex + 1, STEPS.length)} of {STEPS.length}</span>
-          <span className="text-brand-700 font-semibold">{STEPS[currentIndex]?.label || status}</span>
+          <span className="text-cyan-400 font-semibold">{STEPS[currentIndex]?.label || status}</span>
         </div>
-        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+        <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
           <div
-            className="bg-brand-600 h-full transition-all duration-300 rounded-full"
+            className="bg-gradient-to-r from-cyan-500 to-teal-400 h-full transition-all duration-300 rounded-full shadow-sm shadow-cyan-500/50"
             style={{ width: `${((currentIndex + 1) / STEPS.length) * 100}%` }}
           />
         </div>
@@ -70,9 +70,9 @@ export function StepIndicator({ status }: StepIndicatorProps) {
 
       {/* Desktop / Tablet full step sequence */}
       <div className="hidden sm:flex items-center justify-between relative">
-        <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-0.5 bg-gray-200 -z-0" />
+        <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-0.5 bg-slate-800 -z-0" />
         <div
-          className="absolute left-4 top-1/2 -translate-y-1/2 h-0.5 bg-brand-600 -z-0 transition-all duration-300"
+          className="absolute left-4 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-cyan-500 to-teal-400 -z-0 transition-all duration-300 shadow-sm shadow-cyan-500/50"
           style={{
             width: `${(currentIndex / (STEPS.length - 1)) * 92}%`,
           }}
@@ -88,16 +88,16 @@ export function StepIndicator({ status }: StepIndicatorProps) {
               <div
                 className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all shadow-sm ${
                   isCompleted
-                    ? "bg-brand-600 text-white ring-4 ring-white"
+                    ? "bg-cyan-400 text-slate-950 ring-4 ring-[#060911]"
                     : isCurrent
-                    ? "bg-white border-2 border-brand-600 text-brand-700 ring-4 ring-brand-50"
-                    : "bg-white border border-gray-300 text-gray-400"
+                    ? "bg-[#0a0f1d] border-2 border-cyan-400 text-cyan-300 ring-4 ring-cyan-500/20 shadow-md shadow-cyan-500/20"
+                    : "bg-[#090d18] border border-slate-700 text-slate-500"
                 }`}
               >
                 {isCompleted ? (
-                  <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <Check className="w-3.5 h-3.5 stroke-[3]" />
                 ) : isCurrent ? (
-                  <Clock className="w-3.5 h-3.5 animate-spin text-brand-600" />
+                  <Clock className="w-3.5 h-3.5 animate-spin text-cyan-400" />
                 ) : (
                   <span>{index + 1}</span>
                 )}
@@ -105,10 +105,10 @@ export function StepIndicator({ status }: StepIndicatorProps) {
               <span
                 className={`text-[11px] mt-1.5 font-medium text-center whitespace-nowrap transition-colors ${
                   isCurrent
-                    ? "text-brand-800 font-semibold"
+                    ? "text-cyan-400 font-semibold"
                     : isCompleted
-                    ? "text-gray-700"
-                    : "text-gray-400"
+                    ? "text-slate-300"
+                    : "text-slate-500"
                 }`}
               >
                 {step.label}
@@ -120,4 +120,3 @@ export function StepIndicator({ status }: StepIndicatorProps) {
     </div>
   );
 }
-

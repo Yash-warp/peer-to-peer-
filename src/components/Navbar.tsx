@@ -62,18 +62,18 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-200">
+      <header className="sticky top-0 z-40 bg-[#060911]/80 backdrop-blur-xl border-b border-white/[0.08] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-md shadow-brand-500/20">
+          <Link href="/" className="flex items-center space-x-2.5 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-teal-400 text-slate-950 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
               <Share2 className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div>
-              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-gray-900 block leading-tight">
+              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-white block leading-tight">
                 {COLLEGE_NAME}
               </span>
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-brand-600 block">
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-cyan-400 block">
                 Peer-to-Peer Lending
               </span>
             </div>
@@ -91,8 +91,8 @@ export function Navbar() {
                     href={link.href}
                     className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
                       isActive
-                        ? "bg-brand-50 text-brand-700 font-semibold"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm shadow-cyan-500/10 font-semibold"
+                        : "text-slate-300 hover:text-white hover:bg-white/[0.05]"
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -104,7 +104,7 @@ export function Navbar() {
               <button
                 onClick={handleLogout}
                 title="Log Out"
-                className="p-2 ml-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                className="p-2 ml-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -113,13 +113,13 @@ export function Navbar() {
             <div className="hidden md:flex items-center space-x-3">
               <Link
                 href="/login"
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all"
+                className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.05] rounded-xl transition-all"
               >
                 Log In
               </Link>
               <Link
                 href="/signup"
-                className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-sm transition-all"
+                className="btn-cyan px-4 py-2 text-sm rounded-xl transition-all"
               >
                 Sign Up
               </Link>
@@ -131,7 +131,7 @@ export function Navbar() {
             {user ? (
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                className="p-2 text-slate-300 hover:text-white hover:bg-white/[0.06] rounded-lg"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -139,13 +139,13 @@ export function Navbar() {
               <div className="flex items-center space-x-2">
                 <Link
                   href="/login"
-                  className="px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg"
+                  className="px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 rounded-lg"
                 >
                   Log In
                 </Link>
                 <Link
                   href="/signup"
-                  className="px-3 py-1.5 text-xs font-semibold text-white bg-brand-600 rounded-lg"
+                  className="btn-cyan px-3 py-1.5 text-xs rounded-lg"
                 >
                   Sign Up
                 </Link>
@@ -154,9 +154,9 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Mobile dropdown menu (when toggled on header) */}
+        {/* Mobile dropdown menu */}
         {mobileMenuOpen && user && (
-          <div className="md:hidden border-t border-gray-100 bg-white px-4 pt-2 pb-4 space-y-1 shadow-lg">
+          <div className="md:hidden border-t border-white/[0.08] bg-[#0a0f1d] px-4 pt-2 pb-4 space-y-1 shadow-2xl">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -165,10 +165,10 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-base font-medium ${
+                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-base font-medium transition-all ${
                     isActive
-                      ? "bg-brand-50 text-brand-700 font-semibold"
-                      : "text-gray-700 hover:bg-gray-50"
+                      ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-semibold"
+                      : "text-slate-300 hover:bg-white/[0.05] hover:text-white"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -181,7 +181,7 @@ export function Navbar() {
                 setMobileMenuOpen(false);
                 handleLogout();
               }}
-              className="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-base font-medium text-red-600 hover:bg-red-50 w-full text-left"
+              className="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-base font-medium text-red-400 hover:bg-red-500/10 w-full text-left"
             >
               <LogOut className="w-5 h-5" />
               <span>Log Out</span>
@@ -190,9 +190,9 @@ export function Navbar() {
         )}
       </header>
 
-      {/* Mobile Bottom Navigation Bar (app-like experience) */}
+      {/* Mobile Bottom Navigation Bar */}
       {user && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 px-2 py-1 flex justify-around items-center">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#070b16]/95 backdrop-blur-xl border-t border-white/[0.08] px-2 py-1 flex justify-around items-center">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
@@ -201,10 +201,10 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={`flex flex-col items-center py-1.5 px-3 rounded-lg text-[10px] font-medium transition-colors ${
-                  isActive ? "text-brand-600 font-bold" : "text-gray-500 hover:text-gray-900"
+                  isActive ? "text-cyan-400 font-bold" : "text-slate-400 hover:text-slate-200"
                 }`}
               >
-                <Icon className={`w-5 h-5 mb-0.5 ${isActive ? "text-brand-600" : "text-gray-500"}`} />
+                <Icon className={`w-5 h-5 mb-0.5 ${isActive ? "text-cyan-400" : "text-slate-400"}`} />
                 <span>{link.label}</span>
               </Link>
             );
@@ -214,4 +214,3 @@ export function Navbar() {
     </>
   );
 }
-

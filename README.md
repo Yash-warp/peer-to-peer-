@@ -4,6 +4,14 @@ A complete, production-ready peer-to-peer item lending platform designed specifi
 
 ---
 
+## 🎨 Design & Theme
+
+- **Modern Crypto & Fintech Aesthetic**: Near-black navy background (`#060911`), white typography, light cool-slate secondary text, and electric cyan/teal accents.
+- **Glassy Cards**: Translucent containers with subtle borders and soft atmospheric drop shadows.
+- **Dynamic UPI QR Code**: Instant scannable QR code generator for desktop and laptop users, allowing mobile UPI scanning via GPay, PhonePe, Paytm, or BHIM.
+
+---
+
 ## ⚡ Tech Stack
 
 - **Framework**: Next.js 14 (App Router) with TypeScript
@@ -52,6 +60,8 @@ Any student attempting to sign up with a non-college email (e.g., Gmail, Yahoo) 
    - Under **Redirect URLs**, add:
      - `http://localhost:3000/auth/callback`
      - `https://your-production-app.vercel.app/auth/callback`
+
+7. *(Optional)* After signing up your first user account, you can run [`supabase/seed.sql`](./supabase/seed.sql) in the SQL Editor to automatically populate realistic campus items (cycles, drafters, lab coats, cameras, fest PA systems).
 
 ---
 

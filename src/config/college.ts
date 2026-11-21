@@ -6,7 +6,7 @@
  * Any user signing up must use an email ending with this domain.
  * For example: "iitb.ac.in", "pilani.bits-pilani.ac.in", "nitt.edu", "mycollege.edu.in"
  */
-export const COLLEGE_EMAIL_DOMAIN = "mycollege.edu.in";
+export const COLLEGE_EMAIL_DOMAIN = "aitpune.edu.in";
 
 export const COLLEGE_NAME = "Campus Peer Share";
 export const COLLEGE_SHORT_NAME = "CampusShare";

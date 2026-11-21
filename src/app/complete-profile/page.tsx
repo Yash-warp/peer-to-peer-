@@ -101,38 +101,38 @@ export default function CompleteProfilePage() {
   if (fetching) {
     return (
       <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-lg bg-white rounded-3xl border border-gray-200/80 p-6 sm:p-10 shadow-sm">
+    <div className="flex-1 flex items-center justify-center px-4 py-16">
+      <div className="w-full max-w-lg bg-[#0d1424]/80 backdrop-blur-xl rounded-3xl border border-white/[0.08] p-6 sm:p-10 shadow-2xl">
         <div className="text-center mb-6">
-          <div className="w-12 h-12 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 bg-cyan-950/50 text-cyan-400 border border-cyan-500/30 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-cyan-500/10">
             <CheckCircle className="w-6 h-6" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Complete Your Campus Profile</h2>
-          <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
+          <h2 className="text-2xl font-black text-white">Complete Your Campus Profile</h2>
+          <p className="text-xs text-slate-400 mt-1.5 max-w-sm mx-auto leading-relaxed">
             Your hostel and phone number are only revealed to your lender or borrower after a deposit is confirmed to coordinate campus pickup.
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex items-start gap-3 text-xs">
-            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 rounded-2xl bg-red-950/40 border border-red-500/30 text-red-300 flex items-start gap-3 text-xs">
+            <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
             <p>{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSaveProfile} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
-              Full Name <span className="text-red-500">*</span>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              Full Name <span className="text-cyan-400">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                 <User className="w-4 h-4" />
               </div>
               <input
@@ -141,17 +141,17 @@ export default function CompleteProfilePage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="e.g. Priyanshu Singh"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
-              Hostel / Block / Room <span className="text-red-500">*</span>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              Hostel / Block / Room <span className="text-cyan-400">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                 <Building className="w-4 h-4" />
               </div>
               <input
@@ -160,17 +160,17 @@ export default function CompleteProfilePage() {
                 value={hostelBlock}
                 onChange={(e) => setHostelBlock(e.target.value)}
                 placeholder="e.g. Brahmaputra Hostel, Wing C-302"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
-              WhatsApp / Phone Number <span className="text-red-500">*</span>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              WhatsApp / Phone Number <span className="text-cyan-400">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                 <Phone className="w-4 h-4" />
               </div>
               <input
@@ -179,18 +179,18 @@ export default function CompleteProfilePage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="e.g. 9876543210"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
               />
             </div>
-            <p className="text-[11px] text-gray-400 mt-1">Kept private until deposit is confirmed.</p>
+            <p className="text-[11px] text-slate-400 mt-1">Kept private until deposit is confirmed.</p>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
               Your UPI ID (Optional)
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                 <CreditCard className="w-4 h-4" />
               </div>
               <input
@@ -198,10 +198,10 @@ export default function CompleteProfilePage() {
                 value={upiId}
                 onChange={(e) => setUpiId(e.target.value)}
                 placeholder="e.g. username@okhdfcbank"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
               />
             </div>
-            <p className="text-[11px] text-gray-400 mt-1">
+            <p className="text-[11px] text-slate-400 mt-1">
               Used when you lend items to receive deposit payments.
             </p>
           </div>
@@ -209,7 +209,7 @@ export default function CompleteProfilePage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-4 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 transition-all shadow-md shadow-brand-500/20 disabled:opacity-50"
+            className="btn-cyan w-full mt-4 py-3 px-4 rounded-xl text-sm transition-all disabled:opacity-50"
           >
             {loading ? "Saving Profile..." : "Save and Continue to Campus Share"}
           </button>
@@ -218,4 +218,3 @@ export default function CompleteProfilePage() {
     </div>
   );
 }
-

@@ -56,25 +56,25 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md bg-white rounded-3xl border border-gray-200/80 p-6 sm:p-10 shadow-sm">
+    <div className="flex-1 flex items-center justify-center px-4 py-16 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md bg-[#0d1424]/80 backdrop-blur-xl rounded-3xl border border-white/[0.08] p-6 sm:p-10 shadow-2xl">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold rounded-full mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 text-xs font-semibold rounded-full mb-3 shadow-sm shadow-cyan-500/10">
             <span>@{COLLEGE_EMAIL_DOMAIN} Members Only</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Welcome Back
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-slate-400 mt-1.5">
             Log in to borrow or lend items on {COLLEGE_NAME}
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex items-start gap-3 text-xs leading-relaxed">
-            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 rounded-2xl bg-red-950/40 border border-red-500/30 text-red-300 flex items-start gap-3 text-xs leading-relaxed">
+            <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold">Login Failed</p>
+              <p className="font-semibold text-red-200">Login Failed</p>
               <p>{error}</p>
             </div>
           </div>
@@ -82,11 +82,11 @@ function LoginForm() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
               College Email
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                 <Mail className="w-4 h-4" />
               </div>
               <input
@@ -95,19 +95,19 @@ function LoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={`rollnumber@${COLLEGE_EMAIL_DOMAIN}`}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
               />
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
                 Password
               </label>
             </div>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                 <Lock className="w-4 h-4" />
               </div>
               <input
@@ -116,7 +116,7 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
               />
             </div>
           </div>
@@ -124,15 +124,15 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 transition-all shadow-md shadow-brand-500/20 disabled:opacity-50 flex items-center justify-center gap-2"
+            className="btn-cyan w-full mt-3 py-3 px-4 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {loading ? "Logging in..." : "Log In"} <ArrowRight className="w-4 h-4" />
+            {loading ? "Logging in..." : "Log In"} <ArrowRight className="w-4 h-4 stroke-[2.5]" />
           </button>
         </form>
 
-        <div className="mt-8 text-center text-xs text-gray-500">
+        <div className="mt-8 text-center text-xs text-slate-400">
           First time here?{" "}
-          <Link href="/signup" className="font-semibold text-brand-700 hover:text-brand-800 underline">
+          <Link href="/signup" className="font-semibold text-cyan-400 hover:text-cyan-300 underline">
             Create an account with your college ID
           </Link>
         </div>
@@ -143,9 +143,8 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-sm text-gray-500">Loading...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-sm text-slate-400">Loading...</div>}>
       <LoginForm />
     </Suspense>
   );
 }
-

@@ -70,17 +70,15 @@ export default function ItemDetailPage() {
           setCurrentUserId(user.id);
         }
 
-        // Fetch item with owner info
         const { data: itemData, error: itemError } = await supabase
           .from("items")
           .select(
             `
             *,
-            owner:users (
+            owner:user_public_profiles (
               id,
               full_name,
-              hostel_block,
-              phone
+              hostel_block
             )
           `
           )
@@ -93,13 +91,12 @@ export default function ItemDetailPage() {
 
         setItem(itemData as Item);
 
-        // Fetch owner ratings
         if (itemData.owner_id) {
           const { data: ratingsData } = await supabase
             .from("ratings")
             .select(`
               *,
-              rater:users!ratings_rater_id_fkey(full_name)
+              rater:user_public_profiles(full_name)
             `)
             .eq("ratee_id", itemData.owner_id)
             .order("created_at", { ascending: false });
@@ -111,7 +108,6 @@ export default function ItemDetailPage() {
           }
         }
 
-        // Check if current user has an active request for this item
         if (user) {
           const { data: reqData } = await supabase
             .from("requests")
@@ -154,12 +150,10 @@ export default function ItemDetailPage() {
     try {
       const supabase = createClient();
 
-      // Check if item is available
       if (item.status !== "available") {
         throw new Error("This item is not currently available for borrowing.");
       }
 
-      // Check if there is already an active accepted/deposit_paid/picked_up request on this item
       const { data: activeRequests } = await supabase
         .from("requests")
         .select("id")
@@ -170,7 +164,6 @@ export default function ItemDetailPage() {
         throw new Error("An active borrower is already in progress with this item.");
       }
 
-      // Insert new request
       const { data: newReq, error: reqError } = await supabase
         .from("requests")
         .insert({
@@ -184,7 +177,6 @@ export default function ItemDetailPage() {
 
       if (reqError) throw reqError;
 
-      // Automatically create the deposit record for this request
       await supabase.from("deposits").insert({
         request_id: newReq.id,
         amount: item.deposit_amount,
@@ -195,7 +187,6 @@ export default function ItemDetailPage() {
       setRequestModalOpen(false);
       setExistingUserRequest(newReq as BorrowRequest);
 
-      // Redirect to My Borrows after short notice
       setTimeout(() => {
         router.push("/my-borrows");
       }, 1500);
@@ -212,20 +203,20 @@ export default function ItemDetailPage() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-12 flex justify-center">
-        <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" />
+      <div className="max-w-5xl mx-auto px-4 py-16 flex justify-center">
+        <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!item) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Item Not Found</h2>
-        <p className="text-sm text-gray-500 mb-6">{error || "This item doesn't exist or was removed."}</p>
+      <div className="max-w-xl mx-auto px-4 py-20 text-center">
+        <h2 className="text-xl font-bold text-white mb-2">Item Not Found</h2>
+        <p className="text-sm text-slate-400 mb-6">{error || "This item doesn't exist or was removed."}</p>
         <Link
           href="/browse"
-          className="inline-flex px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700"
+          className="btn-cyan inline-flex px-5 py-2.5 rounded-xl text-sm transition-all"
         >
           Return to Browse
         </Link>
@@ -242,7 +233,7 @@ export default function ItemDetailPage() {
       <div className="mb-6">
         <Link
           href="/browse"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-800 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Browse</span>
@@ -250,15 +241,15 @@ export default function ItemDetailPage() {
       </div>
 
       {success && (
-        <div className="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-3 text-sm">
-          <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+        <div className="mb-6 p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 flex items-center gap-3 text-sm">
+          <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
           <span>{success} Redirecting to your borrows...</span>
         </div>
       )}
 
       {error && (
-        <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex items-center gap-3 text-sm">
-          <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
+        <div className="mb-6 p-4 rounded-2xl bg-red-950/40 border border-red-500/30 text-red-300 flex items-center gap-3 text-sm">
+          <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -266,7 +257,7 @@ export default function ItemDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left: Big Photo */}
         <div className="lg:col-span-7">
-          <div className="relative aspect-[4/3] w-full rounded-3xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm">
+          <div className="relative aspect-[4/3] w-full rounded-3xl overflow-hidden bg-[#080d19] border border-white/[0.08] shadow-2xl">
             {item.photo_url ? (
               <Image
                 src={item.photo_url}
@@ -277,11 +268,11 @@ export default function ItemDetailPage() {
                 sizes="(max-width: 1024px) 100vw, 60vw"
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-emerald-50/60 text-brand-600">
-                <div className="p-6 bg-white rounded-3xl shadow-sm border border-brand-100 text-brand-700 mb-2">
+              <div className="w-full h-full flex flex-col items-center justify-center bg-[#0a0f1e] text-cyan-400">
+                <div className="p-6 bg-cyan-950/40 rounded-3xl border border-cyan-500/20 text-cyan-400 mb-2 shadow-sm shadow-cyan-500/10">
                   {CATEGORY_ICONS[item.category] || <Package className="w-12 h-12" />}
                 </div>
-                <span className="text-sm font-semibold text-brand-700">No Photo Uploaded</span>
+                <span className="text-sm font-semibold text-slate-400">No Photo Uploaded</span>
               </div>
             )}
 
@@ -289,27 +280,27 @@ export default function ItemDetailPage() {
               <StatusBadge status={item.status} type="item" />
             </div>
 
-            <div className="absolute bottom-4 right-4 bg-gray-900/85 backdrop-blur-md text-white text-sm font-bold px-3.5 py-1.5 rounded-xl shadow-sm">
+            <div className="absolute bottom-4 right-4 bg-[#060911]/90 backdrop-blur-md text-cyan-300 text-sm font-bold px-3.5 py-1.5 rounded-xl border border-cyan-500/20 shadow-lg">
               {formatRupees(item.deposit_amount)} Refundable Deposit
             </div>
           </div>
 
           {/* Description Section */}
-          <div className="mt-8 bg-white rounded-3xl border border-gray-200/80 p-6 sm:p-8 shadow-sm">
-            <h3 className="font-bold text-gray-900 text-lg mb-3">Item Description</h3>
-            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+          <div className="mt-8 bg-[#0d1424]/80 backdrop-blur-xl rounded-3xl border border-white/[0.08] p-6 sm:p-8 shadow-xl">
+            <h3 className="font-bold text-white text-lg mb-3">Item Description</h3>
+            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
               {item.description || "No specific instructions provided by the owner. You can coordinate pickup time and campus location upon request approval."}
             </p>
           </div>
 
           {/* Owner Reviews Section */}
-          <div className="mt-8 bg-white rounded-3xl border border-gray-200/80 p-6 sm:p-8 shadow-sm">
+          <div className="mt-8 bg-[#0d1424]/80 backdrop-blur-xl rounded-3xl border border-white/[0.08] p-6 sm:p-8 shadow-xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-gray-900 text-lg">
+              <h3 className="font-bold text-white text-lg">
                 Reviews for {ownerFirstName} ({ownerRatings.length})
               </h3>
               {averageRating !== null && (
-                <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200 text-amber-900 text-xs font-bold">
+                <div className="flex items-center gap-1.5 bg-amber-500/10 px-2.5 py-1 rounded-xl border border-amber-500/25 text-amber-300 text-xs font-bold">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   <span>{averageRating} / 5.0</span>
                 </div>
@@ -317,15 +308,15 @@ export default function ItemDetailPage() {
             </div>
 
             {ownerRatings.length === 0 ? (
-              <p className="text-xs text-gray-400 py-2">
+              <p className="text-xs text-slate-500 py-2">
                 No ratings yet for this student. Be the first to borrow and leave a review!
               </p>
             ) : (
-              <div className="space-y-3 divide-y divide-gray-100">
+              <div className="space-y-3 divide-y divide-white/[0.06]">
                 {ownerRatings.slice(0, 5).map((r) => (
                   <div key={r.id} className="pt-3 first:pt-0">
                     <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="font-semibold text-gray-800">
+                      <span className="font-semibold text-slate-200">
                         {r.rater?.full_name ? r.rater.full_name.split(" ")[0] : "Verified Student"}
                       </span>
                       <div className="flex text-amber-400">
@@ -334,8 +325,8 @@ export default function ItemDetailPage() {
                         ))}
                       </div>
                     </div>
-                    {r.comment && <p className="text-xs text-gray-600 italic">&quot;{r.comment}&quot;</p>}
-                    <span className="text-[10px] text-gray-400">{formatDate(r.created_at)}</span>
+                    {r.comment && <p className="text-xs text-slate-400 italic">&quot;{r.comment}&quot;</p>}
+                    <span className="text-[10px] text-slate-500">{formatDate(r.created_at)}</span>
                   </div>
                 ))}
               </div>
@@ -345,44 +336,44 @@ export default function ItemDetailPage() {
 
         {/* Right: Item Metadata & Borrow Action Box */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white rounded-3xl border border-gray-200/80 p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="bg-[#0d1424]/80 backdrop-blur-xl rounded-3xl border border-white/[0.08] p-6 sm:p-8 shadow-xl space-y-6">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-brand-600">
+              <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400">
                 {item.category.replace("_", " ")}
               </span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
                 {item.title}
               </h1>
             </div>
 
             {/* Deposit Box */}
-            <div className="p-4 rounded-2xl bg-brand-50/70 border border-brand-200/80">
-              <div className="text-xs font-semibold text-brand-800 uppercase tracking-wider mb-1">
+            <div className="p-4 rounded-2xl bg-cyan-950/30 border border-cyan-500/20">
+              <div className="text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-1">
                 Security Deposit
               </div>
-              <div className="text-3xl font-black text-brand-900">
+              <div className="text-3xl font-black text-white">
                 {formatRupees(item.deposit_amount)}
               </div>
-              <p className="text-[11px] text-brand-700 mt-1">
+              <p className="text-[11px] text-slate-400 mt-1">
                 Paid directly via UPI to the owner once request is accepted. 100% refunded when returned intact.
               </p>
             </div>
 
             {/* Owner Profile Card */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-[#070b16] border border-white/[0.06] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-white border border-gray-200 text-gray-700 flex items-center justify-center font-bold text-base shadow-sm">
+                <div className="w-11 h-11 rounded-2xl bg-cyan-950/50 border border-cyan-500/20 text-cyan-300 flex items-center justify-center font-bold text-base shadow-sm">
                   {ownerFirstName.charAt(0)}
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-gray-900 flex items-center gap-1.5">
+                  <div className="text-sm font-bold text-white flex items-center gap-1.5">
                     <span>{ownerFirstName}</span>
                     <span title="Verified Campus Student">
-                      <ShieldCheck className="w-4 h-4 text-brand-600" />
+                      <ShieldCheck className="w-4 h-4 text-cyan-400" />
                     </span>
                   </div>
-                  <div className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
-                    <Building className="w-3.5 h-3.5 text-gray-400" />
+                  <div className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                    <Building className="w-3.5 h-3.5 text-slate-500" />
                     <span>{item.owner?.hostel_block || "Campus Hostel"}</span>
                   </div>
                 </div>
@@ -390,11 +381,11 @@ export default function ItemDetailPage() {
 
               {/* Rating pill */}
               <div className="text-right">
-                <div className="flex items-center gap-1 text-xs font-bold text-gray-800">
+                <div className="flex items-center gap-1 text-xs font-bold text-slate-200">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   <span>{averageRating !== null ? `${averageRating}/5` : "New"}</span>
                 </div>
-                <div className="text-[10px] text-gray-400">
+                <div className="text-[10px] text-slate-500">
                   {ownerRatings.length} {ownerRatings.length === 1 ? "review" : "reviews"}
                 </div>
               </div>
@@ -403,37 +394,37 @@ export default function ItemDetailPage() {
             {/* Action Buttons based on ownership & state */}
             {isOwner ? (
               <div className="space-y-3">
-                <div className="p-3 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-xs font-medium text-center">
+                <div className="p-3 bg-cyan-950/40 border border-cyan-500/20 text-cyan-300 rounded-xl text-xs font-medium text-center">
                   You are the owner of this item
                 </div>
                 <Link
                   href="/my-items"
-                  className="w-full py-3 px-4 rounded-xl text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 transition-all shadow-sm flex items-center justify-center"
+                  className="btn-cyan w-full py-3 px-4 rounded-xl text-sm transition-all flex items-center justify-center"
                 >
                   Manage in My Items
                 </Link>
               </div>
             ) : item.status === "borrowed" ? (
               <div className="space-y-2">
-                <div className="w-full py-3 px-4 rounded-xl text-sm font-semibold text-amber-800 bg-amber-100 border border-amber-200 text-center">
+                <div className="w-full py-3 px-4 rounded-xl text-sm font-semibold text-amber-300 bg-amber-950/40 border border-amber-500/25 text-center">
                   Currently Borrowed by a Student
                 </div>
-                <p className="text-[11px] text-gray-400 text-center">
+                <p className="text-[11px] text-slate-500 text-center">
                   Check back later once the current borrower returns it.
                 </p>
               </div>
             ) : item.status === "paused" ? (
-              <div className="w-full py-3 px-4 rounded-xl text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-200 text-center">
+              <div className="w-full py-3 px-4 rounded-xl text-sm font-semibold text-slate-400 bg-slate-900 border border-slate-800 text-center">
                 Currently Paused by Owner
               </div>
             ) : existingUserRequest ? (
               <div className="space-y-2">
-                <div className="p-3 bg-purple-50 border border-purple-200 text-purple-800 rounded-xl text-xs font-medium text-center">
+                <div className="p-3 bg-purple-950/40 border border-purple-500/25 text-purple-300 rounded-xl text-xs font-medium text-center">
                   You have an active request: <strong>{existingUserRequest.status.replace("_", " ")}</strong>
                 </div>
                 <Link
                   href="/my-borrows"
-                  className="w-full py-3 px-4 rounded-xl text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 transition-all shadow-sm flex items-center justify-center"
+                  className="btn-cyan w-full py-3 px-4 rounded-xl text-sm transition-all flex items-center justify-center"
                 >
                   View Request in My Borrows →
                 </Link>
@@ -443,14 +434,14 @@ export default function ItemDetailPage() {
                 {!requestModalOpen ? (
                   <button
                     onClick={() => setRequestModalOpen(true)}
-                    className="w-full py-3.5 px-6 rounded-2xl text-base font-bold text-white bg-brand-600 hover:bg-brand-700 shadow-md shadow-brand-500/25 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+                    className="btn-cyan w-full py-3.5 px-6 rounded-2xl text-base transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
                   >
                     <span>Request to Borrow</span>
                   </button>
                 ) : (
                   <form onSubmit={handleCreateRequest} className="space-y-3 pt-2">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      <label className="block text-xs font-semibold text-slate-300 mb-1">
                         Note to Owner (Optional)
                       </label>
                       <textarea
@@ -458,21 +449,21 @@ export default function ItemDetailPage() {
                         onChange={(e) => setRequestMessage(e.target.value)}
                         placeholder="E.g., Hi! Need this for 3 days for our tech fest workshop. Can meet at library at 5 PM."
                         rows={3}
-                        className="w-full p-3 rounded-xl border border-gray-300 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        className="w-full p-3 rounded-xl border border-slate-700/80 bg-[#070b16] text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                       />
                     </div>
                     <div className="flex gap-2">
                       <button
                         type="button"
                         onClick={() => setRequestModalOpen(false)}
-                        className="w-1/3 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl border border-gray-200"
+                        className="w-1/3 py-2.5 text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.05] rounded-xl border border-white/10"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={submittingRequest}
-                        className="w-2/3 py-2.5 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-sm transition-all disabled:opacity-50 flex items-center justify-center gap-1.5"
+                        className="btn-cyan w-2/3 py-2.5 text-xs rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-1.5"
                       >
                         <Send className="w-3.5 h-3.5" />
                         <span>{submittingRequest ? "Sending..." : "Confirm Request"}</span>
@@ -484,13 +475,13 @@ export default function ItemDetailPage() {
             )}
 
             {/* Safety & Manual UPI Notice */}
-            <div className="pt-4 border-t border-gray-100 text-xs text-gray-500 space-y-2">
+            <div className="pt-4 border-t border-white/[0.06] text-xs text-slate-400 space-y-2">
               <div className="flex items-start gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
                 <span>Deposit paid via personal UPI app only after owner accepts your request.</span>
               </div>
               <div className="flex items-start gap-2">
-                <User className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
+                <User className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
                 <span>Phone numbers are unlocked once deposit is confirmed to coordinate campus pickup.</span>
               </div>
             </div>

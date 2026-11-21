@@ -27,11 +27,9 @@ export default function ProfilePage() {
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [averageRating, setAverageRating] = useState<number | null>(null);
 
-  // Stats
   const [itemsCount, setItemsCount] = useState<number>(0);
   const [borrowsCount, setBorrowsCount] = useState<number>(0);
 
-  // Edit state
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState("");
   const [hostelBlock, setHostelBlock] = useState("");
@@ -58,7 +56,6 @@ export default function ProfilePage() {
 
       setEmail(user.email || "");
 
-      // 1. Fetch profile from public.users
       const { data: profData, error: profError } = await supabase
         .from("users")
         .select("*")
@@ -75,12 +72,11 @@ export default function ProfilePage() {
         setUpiId(profData.upi_id || "");
       }
 
-      // 2. Fetch ratings received
       const { data: ratingsData } = await supabase
         .from("ratings")
         .select(`
           *,
-          rater:users!ratings_rater_id_fkey(full_name, hostel_block)
+          rater:user_public_profiles(full_name, hostel_block)
         `)
         .eq("ratee_id", user.id)
         .order("created_at", { ascending: false });
@@ -91,7 +87,6 @@ export default function ProfilePage() {
         setAverageRating(Number((sum / ratingsData.length).toFixed(1)));
       }
 
-      // 3. Fetch count of items and borrows
       const { count: itemCount } = await supabase
         .from("items")
         .select("*", { count: "exact", head: true })
@@ -163,36 +158,36 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 flex justify-center">
-        <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-1">
       {/* Top Profile Header */}
-      <div className="bg-white rounded-3xl border border-gray-200/80 p-6 sm:p-8 shadow-sm mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-gray-100">
+      <div className="bg-[#0d1424]/80 backdrop-blur-xl rounded-3xl border border-white/[0.08] p-6 sm:p-8 shadow-2xl mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-white/[0.06]">
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-brand-50 text-brand-700 border-2 border-brand-200 flex items-center justify-center text-2xl font-black shadow-sm">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-cyan-950/50 text-cyan-300 border-2 border-cyan-500/30 flex items-center justify-center text-2xl font-black shadow-lg shadow-cyan-500/10">
               {profile?.full_name ? profile.full_name.charAt(0) : "U"}
             </div>
 
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900">
+                <h1 className="text-xl sm:text-2xl font-extrabold text-white">
                   {profile?.full_name || "Campus Student"}
                 </h1>
                 <span title="Verified Campus Student">
-                  <ShieldCheck className="w-5 h-5 text-brand-600" />
+                  <ShieldCheck className="w-5 h-5 text-cyan-400" />
                 </span>
               </div>
-              <p className="text-xs text-gray-500 flex items-center gap-1.5 mt-0.5">
-                <Mail className="w-3.5 h-3.5 text-gray-400" />
+              <p className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
+                <Mail className="w-3.5 h-3.5 text-slate-500" />
                 <span>{email}</span>
               </p>
-              <p className="text-xs text-gray-500 flex items-center gap-1.5 mt-0.5">
-                <Building className="w-3.5 h-3.5 text-gray-400" />
+              <p className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
+                <Building className="w-3.5 h-3.5 text-slate-500" />
                 <span>{profile?.hostel_block || "Campus Hostel"}</span>
               </p>
             </div>
@@ -201,14 +196,14 @@ export default function ProfilePage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsEditing(!isEditing)}
-              className="px-4 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 flex items-center gap-1.5 transition-colors"
+              className="px-4 py-2 rounded-xl border border-white/10 bg-white/[0.05] text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.08] flex items-center gap-1.5 transition-colors"
             >
               <Edit2 className="w-3.5 h-3.5" />
               <span>{isEditing ? "Cancel Edit" : "Edit Profile"}</span>
             </button>
             <button
               onClick={handleSignOut}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 flex items-center gap-1.5 transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-red-300 bg-red-950/40 hover:bg-red-900/40 border border-red-500/30 flex items-center gap-1.5 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Log Out</span>
@@ -218,26 +213,26 @@ export default function ProfilePage() {
 
         {/* Stats bar */}
         <div className="grid grid-cols-3 gap-4 pt-6 text-center">
-          <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
-            <div className="text-xl sm:text-2xl font-extrabold text-gray-900">{itemsCount}</div>
-            <div className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mt-0.5">
+          <div className="p-3.5 rounded-2xl bg-[#070b16] border border-white/[0.06]">
+            <div className="text-xl sm:text-2xl font-extrabold text-white">{itemsCount}</div>
+            <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">
               Items Listed
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
-            <div className="text-xl sm:text-2xl font-extrabold text-gray-900">{borrowsCount}</div>
-            <div className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mt-0.5">
+          <div className="p-3.5 rounded-2xl bg-[#070b16] border border-white/[0.06]">
+            <div className="text-xl sm:text-2xl font-extrabold text-white">{borrowsCount}</div>
+            <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">
               Borrow Requests
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
-            <div className="text-xl sm:text-2xl font-extrabold text-brand-700 flex items-center justify-center gap-1">
+          <div className="p-3.5 rounded-2xl bg-[#070b16] border border-white/[0.06]">
+            <div className="text-xl sm:text-2xl font-extrabold text-cyan-400 flex items-center justify-center gap-1">
               <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
               <span>{averageRating !== null ? averageRating : "N/A"}</span>
             </div>
-            <div className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mt-0.5">
+            <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">
               Avg Rating ({ratings.length})
             </div>
           </div>
@@ -245,31 +240,31 @@ export default function ProfilePage() {
       </div>
 
       {success && (
-        <div className="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-3 text-xs">
-          <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+        <div className="mb-6 p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 flex items-center gap-3 text-xs">
+          <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
           <span>{success}</span>
         </div>
       )}
 
       {error && (
-        <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex items-center gap-3 text-xs">
-          <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
+        <div className="mb-6 p-4 rounded-2xl bg-red-950/40 border border-red-500/30 text-red-300 flex items-center gap-3 text-xs">
+          <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Edit Form */}
       {isEditing && (
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-6 sm:p-8 shadow-sm mb-8 animate-fade-in">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Edit Profile & UPI Details</h2>
+        <div className="bg-[#0d1424]/80 backdrop-blur-xl rounded-3xl border border-white/[0.08] p-6 sm:p-8 shadow-2xl mb-8 animate-fade-in">
+          <h2 className="text-lg font-bold text-white mb-4">Edit Profile & UPI Details</h2>
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
                   Full Name
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <User className="w-4 h-4" />
                   </div>
                   <input
@@ -277,17 +272,17 @@ export default function ProfilePage() {
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
                   Hostel / Block
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Building className="w-4 h-4" />
                   </div>
                   <input
@@ -295,7 +290,7 @@ export default function ProfilePage() {
                     required
                     value={hostelBlock}
                     onChange={(e) => setHostelBlock(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                   />
                 </div>
               </div>
@@ -303,11 +298,11 @@ export default function ProfilePage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
                   Phone Number
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Phone className="w-4 h-4" />
                   </div>
                   <input
@@ -315,20 +310,20 @@ export default function ProfilePage() {
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                   />
                 </div>
-                <p className="text-[11px] text-gray-400 mt-1">
+                <p className="text-[11px] text-slate-400 mt-1">
                   Revealed to peer only after deposit is confirmed.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
                   Your UPI ID (For Receiving Deposits)
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <CreditCard className="w-4 h-4" />
                   </div>
                   <input
@@ -336,10 +331,10 @@ export default function ProfilePage() {
                     value={upiId}
                     onChange={(e) => setUpiId(e.target.value)}
                     placeholder="e.g. name@okhdfcbank"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                   />
                 </div>
-                <p className="text-[11px] text-gray-400 mt-1">
+                <p className="text-[11px] text-slate-400 mt-1">
                   Borrowers pay deposits directly to this UPI address.
                 </p>
               </div>
@@ -349,14 +344,14 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-xl"
+                className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={saving}
-                className="px-5 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-sm disabled:opacity-50"
+                className="btn-cyan px-5 py-2 text-xs rounded-xl transition-all disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </button>
@@ -366,16 +361,16 @@ export default function ProfilePage() {
       )}
 
       {/* Ratings & Reviews Received */}
-      <div className="bg-white rounded-3xl border border-gray-200/80 p-6 sm:p-8 shadow-sm">
+      <div className="bg-[#0d1424]/80 backdrop-blur-xl rounded-3xl border border-white/[0.08] p-6 sm:p-8 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-brand-600" />
-            <h2 className="text-lg font-bold text-gray-900">
+            <MessageSquare className="w-5 h-5 text-cyan-400" />
+            <h2 className="text-lg font-bold text-white">
               Ratings & Reviews Received ({ratings.length})
             </h2>
           </div>
           {averageRating !== null && (
-            <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1 rounded-xl border border-amber-200 text-amber-900 text-xs font-bold">
+            <div className="flex items-center gap-1.5 bg-amber-500/10 px-3 py-1 rounded-xl border border-amber-500/25 text-amber-300 text-xs font-bold">
               <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
               <span>{averageRating} / 5.0 Average</span>
             </div>
@@ -383,19 +378,19 @@ export default function ProfilePage() {
         </div>
 
         {ratings.length === 0 ? (
-          <div className="text-center py-8 text-xs text-gray-400">
+          <div className="text-center py-8 text-xs text-slate-500">
             No ratings received yet. Once you complete a borrow or lend transaction, fellow campus peers will leave feedback here.
           </div>
         ) : (
-          <div className="space-y-4 divide-y divide-gray-100">
+          <div className="space-y-4 divide-y divide-white/[0.06]">
             {ratings.map((r) => (
               <div key={r.id} className="pt-4 first:pt-0">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm text-gray-900">
+                    <span className="font-semibold text-sm text-slate-200">
                       {r.rater?.full_name || "Campus Peer"}
                     </span>
-                    <span className="text-[11px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
+                    <span className="text-[11px] text-slate-400 bg-white/[0.05] border border-white/[0.06] px-2 py-0.5 rounded">
                       {r.rater?.hostel_block || "Campus"}
                     </span>
                   </div>
@@ -405,7 +400,7 @@ export default function ProfilePage() {
                       <Star
                         key={idx}
                         className={`w-3.5 h-3.5 ${
-                          idx < r.stars ? "fill-amber-400 text-amber-400" : "text-gray-200"
+                          idx < r.stars ? "fill-amber-400 text-amber-400" : "text-slate-700"
                         }`}
                       />
                     ))}
@@ -413,12 +408,12 @@ export default function ProfilePage() {
                 </div>
 
                 {r.comment && (
-                  <p className="text-xs text-gray-700 leading-relaxed italic bg-slate-50 p-2.5 rounded-xl border border-slate-100 mb-1">
+                  <p className="text-xs text-slate-300 leading-relaxed italic bg-[#070b16] p-3 rounded-xl border border-white/[0.06] mb-1">
                     &quot;{r.comment}&quot;
                   </p>
                 )}
 
-                <span className="text-[10px] text-gray-400">{formatDate(r.created_at)}</span>
+                <span className="text-[10px] text-slate-500">{formatDate(r.created_at)}</span>
               </div>
             ))}
           </div>

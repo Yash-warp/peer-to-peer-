@@ -26,7 +26,6 @@ export default function SignupPage() {
     setError(null);
     setSuccess(null);
 
-    // 1. Validate college email domain
     const cleanEmail = email.trim().toLowerCase();
     if (!isValidCollegeEmail(cleanEmail)) {
       setError(
@@ -35,7 +34,6 @@ export default function SignupPage() {
       return;
     }
 
-    // 2. Validate password
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       return;
@@ -45,13 +43,11 @@ export default function SignupPage() {
       return;
     }
 
-    // 3. Validate required profile fields
     if (!fullName.trim() || !hostelBlock.trim() || !phone.trim()) {
       setError("Please fill in your name, hostel/block, and phone number.");
       return;
     }
 
-    // Validate phone number (basic Indian phone validation)
     const cleanPhone = phone.trim().replace(/[\s-]/g, "");
     if (!/^\+?[0-9]{10,13}$/.test(cleanPhone)) {
       setError("Please enter a valid 10-digit phone number.");
@@ -79,7 +75,6 @@ export default function SignupPage() {
 
       if (signupError) throw signupError;
 
-      // Also ensure profile row is created/upserted in public.users if user session is active
       if (data.user) {
         await supabase.from("users").upsert({
           id: data.user.id,
@@ -90,7 +85,6 @@ export default function SignupPage() {
         });
       }
 
-      // Check if session exists (e.g. email confirmation disabled in local/supabase settings)
       if (data.session) {
         router.push("/browse");
         router.refresh();
@@ -111,45 +105,45 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-lg bg-white rounded-3xl border border-gray-200/80 p-6 sm:p-10 shadow-sm">
+    <div className="flex-1 flex items-center justify-center px-4 py-16 sm:px-6 lg:px-8">
+      <div className="w-full max-w-lg bg-[#0d1424]/80 backdrop-blur-xl rounded-3xl border border-white/[0.08] p-6 sm:p-10 shadow-2xl">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold rounded-full mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 text-xs font-semibold rounded-full mb-3 shadow-sm shadow-cyan-500/10">
             <span>@{COLLEGE_EMAIL_DOMAIN} Members Only</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Join {COLLEGE_NAME}
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-slate-400 mt-1.5">
             Create an account using your official college email ID
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex items-start gap-3 text-xs leading-relaxed">
-            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 rounded-2xl bg-red-950/40 border border-red-500/30 text-red-300 flex items-start gap-3 text-xs leading-relaxed">
+            <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold">Sign Up Failed</p>
+              <p className="font-semibold text-red-200">Sign Up Failed</p>
               <p>{error}</p>
             </div>
           </div>
         )}
 
         {success ? (
-          <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-4">
-            <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+          <div className="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-center space-y-4">
+            <div className="w-12 h-12 bg-emerald-900/50 text-emerald-400 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-7 h-7" />
             </div>
             <div>
-              <h3 className="font-bold text-gray-900 text-lg">Check your college email</h3>
-              <p className="text-sm text-gray-600 mt-1">{success}</p>
+              <h3 className="font-bold text-white text-lg">Check your college email</h3>
+              <p className="text-sm text-slate-300 mt-1">{success}</p>
             </div>
             <div className="pt-2">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"
+                className="btn-cyan inline-flex items-center gap-2 text-sm px-5 py-2.5 rounded-xl transition-all"
               >
-                Go to Log In <ArrowRight className="w-4 h-4" />
+                Go to Log In <ArrowRight className="w-4 h-4 stroke-[2.5]" />
               </Link>
             </div>
           </div>
@@ -157,11 +151,11 @@ export default function SignupPage() {
           <form onSubmit={handleSignup} className="space-y-4">
             {/* College Email */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
-                College Email Address <span className="text-red-500">*</span>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                College Email Address <span className="text-cyan-400">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                   <Mail className="w-4 h-4" />
                 </div>
                 <input
@@ -170,20 +164,20 @@ export default function SignupPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={`rollnumber@${COLLEGE_EMAIL_DOMAIN}`}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                 />
               </div>
-              <p className="text-[11px] text-gray-400 mt-1">Must end with @{COLLEGE_EMAIL_DOMAIN}</p>
+              <p className="text-[11px] text-slate-400 mt-1">Must end with @{COLLEGE_EMAIL_DOMAIN}</p>
             </div>
 
             {/* Password and Confirm */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
-                  Password <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                  Password <span className="text-cyan-400">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Lock className="w-4 h-4" />
                   </div>
                   <input
@@ -192,16 +186,16 @@ export default function SignupPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Min 6 chars"
-                    className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                    className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
-                  Confirm Password <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                  Confirm Password <span className="text-cyan-400">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Lock className="w-4 h-4" />
                   </div>
                   <input
@@ -210,7 +204,7 @@ export default function SignupPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Repeat password"
-                    className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                    className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                   />
                 </div>
               </div>
@@ -218,11 +212,11 @@ export default function SignupPage() {
 
             {/* Full Name */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
-                Full Name <span className="text-red-500">*</span>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                Full Name <span className="text-cyan-400">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                   <User className="w-4 h-4" />
                 </div>
                 <input
@@ -231,7 +225,7 @@ export default function SignupPage() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g. Rahul Sharma"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                 />
               </div>
             </div>
@@ -239,11 +233,11 @@ export default function SignupPage() {
             {/* Hostel and Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
-                  Hostel / Block <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                  Hostel / Block <span className="text-cyan-400">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Building className="w-4 h-4" />
                   </div>
                   <input
@@ -252,17 +246,17 @@ export default function SignupPage() {
                     value={hostelBlock}
                     onChange={(e) => setHostelBlock(e.target.value)}
                     placeholder="e.g. Block B, Room 204"
-                    className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                    className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
-                  Phone Number <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                  Phone Number <span className="text-cyan-400">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Phone className="w-4 h-4" />
                   </div>
                   <input
@@ -271,19 +265,19 @@ export default function SignupPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="e.g. 9876543210"
-                    className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                    className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                   />
                 </div>
               </div>
             </div>
 
-            {/* UPI ID (for receiving deposits) */}
+            {/* UPI ID */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
                 Your UPI ID (Optional - for receiving deposits)
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                   <CreditCard className="w-4 h-4" />
                 </div>
                 <input
@@ -291,10 +285,10 @@ export default function SignupPage() {
                   value={upiId}
                   onChange={(e) => setUpiId(e.target.value)}
                   placeholder="e.g. name@okhdfcbank or 9876543210@paytm"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-[#070b16] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20"
                 />
               </div>
-              <p className="text-[11px] text-gray-400 mt-1">
+              <p className="text-[11px] text-slate-400 mt-1">
                 Borrowers will pay deposits directly to this UPI ID when you accept their request.
               </p>
             </div>
@@ -302,16 +296,16 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 transition-all shadow-md shadow-brand-500/20 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="btn-cyan w-full mt-3 py-3 px-4 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? "Creating your account..." : "Sign Up with College ID"}
             </button>
           </form>
         )}
 
-        <div className="mt-8 text-center text-xs text-gray-500">
+        <div className="mt-8 text-center text-xs text-slate-400">
           Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-brand-700 hover:text-brand-800 underline">
+          <Link href="/login" className="font-semibold text-cyan-400 hover:text-cyan-300 underline">
             Log in here
           </Link>
         </div>
@@ -319,4 +313,3 @@ export default function SignupPage() {
     </div>
   );
 }
-

@@ -54,7 +54,6 @@ export function RatingModal({
       });
 
       if (ratingError) {
-        // If already rated
         if (ratingError.code === "23505") {
           throw new Error("You have already submitted a rating for this borrow request.");
         }
@@ -88,29 +87,29 @@ export function RatingModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+      <div className="bg-[#0b101f] border border-white/10 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-200">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+          className="absolute right-4 top-4 p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/[0.05] transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <h3 className="text-xl font-bold text-gray-900 mb-1">Rate Experience</h3>
-        <p className="text-sm text-gray-500 mb-5">
-          How was your lending experience with <span className="font-semibold text-gray-800">{rateeName}</span> for <span className="font-semibold text-gray-800">{itemTitle}</span>?
+        <h3 className="text-xl font-extrabold text-white mb-1">Rate Experience</h3>
+        <p className="text-sm text-slate-400 mb-5 leading-relaxed">
+          How was your lending experience with <span className="font-semibold text-cyan-300">{rateeName}</span> for <span className="font-semibold text-slate-200">{itemTitle}</span>?
         </p>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl">
+          <div className="mb-4 p-3 bg-red-950/40 border border-red-500/20 text-red-300 text-xs rounded-xl">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Star selector */}
-          <div className="flex flex-col items-center justify-center py-2">
+          <div className="flex flex-col items-center justify-center py-2 bg-[#070b16] rounded-2xl border border-white/[0.06] p-4">
             <div className="flex items-center space-x-2">
               {[1, 2, 3, 4, 5].map((starVal) => {
                 const filled = starVal <= (hoverStars || stars);
@@ -125,14 +124,14 @@ export function RatingModal({
                   >
                     <Star
                       className={`w-8 h-8 ${
-                        filled ? "fill-amber-400 text-amber-400" : "text-gray-300"
+                        filled ? "fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" : "text-slate-700"
                       }`}
                     />
                   </button>
                 );
               })}
             </div>
-            <span className="text-xs font-medium text-gray-600 mt-2">
+            <span className="text-xs font-semibold text-cyan-400 mt-2">
               {stars === 5 && "Excellent (5/5)"}
               {stars === 4 && "Great (4/5)"}
               {stars === 3 && "Average (3/5)"}
@@ -142,7 +141,7 @@ export function RatingModal({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
               Review Comment (Optional)
             </label>
             <textarea
@@ -150,7 +149,7 @@ export function RatingModal({
               onChange={(e) => setComment(e.target.value)}
               placeholder="E.g., Returned in perfect condition on time, very polite!"
               rows={3}
-              className="w-full text-sm rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder-gray-400"
+              className="w-full text-sm rounded-xl border border-slate-700/80 bg-[#070b16] p-3 text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-500/20 placeholder-slate-500"
             />
           </div>
 
@@ -159,14 +158,14 @@ export function RatingModal({
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl"
+              className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.05] rounded-xl transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-sm transition-all disabled:opacity-50"
+              className="btn-cyan px-5 py-2 text-sm rounded-xl transition-all disabled:opacity-50"
             >
               {loading ? "Submitting..." : "Submit Rating"}
             </button>
@@ -176,4 +175,3 @@ export function RatingModal({
     </div>
   );
 }
-
