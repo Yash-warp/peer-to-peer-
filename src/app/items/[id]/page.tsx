@@ -72,16 +72,7 @@ export default function ItemDetailPage() {
 
         const { data: itemData, error: itemError } = await supabase
           .from("items")
-          .select(
-            `
-            *,
-            owner:user_public_profiles!items_owner_id_fkey (
-              id,
-              full_name,
-              hostel_block
-            )
-          `
-          )
+          .select("*")
           .eq("id", id)
           .single();
 
@@ -89,20 +80,48 @@ export default function ItemDetailPage() {
           throw new Error("Item not found or could not be loaded.");
         }
 
+        if (itemData.owner_id) {
+          const { data: ownerProfile } = await supabase
+            .from("user_public_profiles")
+            .select("id, full_name, hostel_block")
+            .eq("id", itemData.owner_id)
+            .maybeSingle();
+
+          itemData.owner = ownerProfile || undefined;
+        }
+
         setItem(itemData as Item);
 
         if (itemData.owner_id) {
           const { data: ratingsData } = await supabase
             .from("ratings")
-            .select(`
-              *,
-              rater:user_public_profiles!ratings_rater_id_fkey(full_name)
-            `)
+            .select("*")
             .eq("ratee_id", itemData.owner_id)
             .order("created_at", { ascending: false });
 
           if (ratingsData && ratingsData.length > 0) {
-            setOwnerRatings(ratingsData as Rating[]);
+            const raterIds = Array.from(new Set(ratingsData.map((r) => r.rater_id).filter(Boolean)));
+            const ratersMap: Record<string, { full_name: string }> = {};
+
+            if (raterIds.length > 0) {
+              const { data: raters } = await supabase
+                .from("user_public_profiles")
+                .select("id, full_name")
+                .in("id", raterIds);
+
+              if (raters) {
+                raters.forEach((r) => {
+                  ratersMap[r.id] = r;
+                });
+              }
+            }
+
+            const mergedRatings = ratingsData.map((r) => ({
+              ...r,
+              rater: ratersMap[r.rater_id] || undefined,
+            }));
+
+            setOwnerRatings(mergedRatings as Rating[]);
             const sum = ratingsData.reduce((acc, curr) => acc + curr.stars, 0);
             setAverageRating(Number((sum / ratingsData.length).toFixed(1)));
           }

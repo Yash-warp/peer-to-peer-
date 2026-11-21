@@ -77,14 +77,11 @@ export default function MyBorrowsPage() {
 
       if (!user) return;
 
-      const { data, error } = await supabase
+      const { data: reqsData, error } = await supabase
         .from("requests")
         .select(`
           *,
-          item:items(
-            *,
-            owner:counterparty_users!items_owner_id_fkey(*)
-          ),
+          item:items(*),
           deposit:deposits(*),
           ratings(*)
         `)
@@ -92,7 +89,44 @@ export default function MyBorrowsPage() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setRequests(data as BorrowRequest[]);
+
+      if (reqsData && reqsData.length > 0) {
+        const ownerIds = Array.from(
+          new Set(
+            reqsData
+              .map((r) => r.item?.owner_id)
+              .filter(Boolean)
+          )
+        );
+        const ownersMap: Record<string, any> = {};
+
+        if (ownerIds.length > 0) {
+          const { data: owners } = await supabase
+            .from("counterparty_users")
+            .select("*")
+            .in("id", ownerIds);
+
+          if (owners) {
+            owners.forEach((o) => {
+              ownersMap[o.id] = o;
+            });
+          }
+        }
+
+        const mergedRequests = reqsData.map((req) => ({
+          ...req,
+          item: req.item
+            ? {
+                ...req.item,
+                owner: ownersMap[req.item.owner_id] || undefined,
+              }
+            : undefined,
+        }));
+
+        setRequests(mergedRequests as BorrowRequest[]);
+      } else {
+        setRequests([]);
+      }
     } catch (err: unknown) {
       console.error("Error loading borrows:", err);
     } finally {

@@ -79,7 +79,6 @@ export default function MyItemsPage() {
           .from("requests")
           .select(`
             *,
-            borrower:counterparty_users!requests_borrower_id_fkey(*),
             deposit:deposits(*),
             ratings(*)
           `)
@@ -88,12 +87,36 @@ export default function MyItemsPage() {
 
         if (reqsError) throw reqsError;
 
-        const grouped: Record<string, BorrowRequest[]> = {};
-        (reqsData as BorrowRequest[]).forEach((req) => {
-          if (!grouped[req.item_id]) grouped[req.item_id] = [];
-          grouped[req.item_id].push(req);
-        });
-        setRequestsByItem(grouped);
+        if (reqsData && reqsData.length > 0) {
+          const borrowerIds = Array.from(new Set(reqsData.map((r) => r.borrower_id).filter(Boolean)));
+          const borrowersMap: Record<string, any> = {};
+
+          if (borrowerIds.length > 0) {
+            const { data: borrowers } = await supabase
+              .from("counterparty_users")
+              .select("*")
+              .in("id", borrowerIds);
+
+            if (borrowers) {
+              borrowers.forEach((b) => {
+                borrowersMap[b.id] = b;
+              });
+            }
+          }
+
+          const grouped: Record<string, BorrowRequest[]> = {};
+          reqsData.forEach((req) => {
+            const mergedReq: BorrowRequest = {
+              ...req,
+              borrower: borrowersMap[req.borrower_id] || undefined,
+            };
+            if (!grouped[req.item_id]) grouped[req.item_id] = [];
+            grouped[req.item_id].push(mergedReq);
+          });
+          setRequestsByItem(grouped);
+        } else {
+          setRequestsByItem({});
+        }
       }
     } catch (err: unknown) {
       console.error("Error loading my items:", err);

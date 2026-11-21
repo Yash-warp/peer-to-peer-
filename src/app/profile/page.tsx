@@ -74,15 +74,33 @@ export default function ProfilePage() {
 
       const { data: ratingsData } = await supabase
         .from("ratings")
-        .select(`
-          *,
-          rater:user_public_profiles!ratings_rater_id_fkey(full_name, hostel_block)
-        `)
+        .select("*")
         .eq("ratee_id", user.id)
         .order("created_at", { ascending: false });
 
       if (ratingsData && ratingsData.length > 0) {
-        setRatings(ratingsData as Rating[]);
+        const raterIds = Array.from(new Set(ratingsData.map((r) => r.rater_id).filter(Boolean)));
+        const ratersMap: Record<string, { full_name: string; hostel_block: string }> = {};
+
+        if (raterIds.length > 0) {
+          const { data: raters } = await supabase
+            .from("user_public_profiles")
+            .select("id, full_name, hostel_block")
+            .in("id", raterIds);
+
+          if (raters) {
+            raters.forEach((r) => {
+              ratersMap[r.id] = r;
+            });
+          }
+        }
+
+        const mergedRatings = ratingsData.map((r) => ({
+          ...r,
+          rater: ratersMap[r.rater_id] || undefined,
+        }));
+
+        setRatings(mergedRatings as Rating[]);
         const sum = ratingsData.reduce((acc, curr) => acc + curr.stars, 0);
         setAverageRating(Number((sum / ratingsData.length).toFixed(1)));
       }

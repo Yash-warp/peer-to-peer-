@@ -25,24 +25,36 @@ function BrowseContent() {
       setLoading(true);
       try {
         const supabase = createClient();
-        const { data, error } = await supabase
+        const { data: itemsData, error } = await supabase
           .from("items")
-          .select(
-            `
-            *,
-            owner:user_public_profiles!items_owner_id_fkey (
-              id,
-              full_name,
-              hostel_block
-            )
-          `
-          )
+          .select("*")
           .order("created_at", { ascending: false });
 
         if (error) {
           console.error("Error fetching items:", error);
-        } else if (data) {
-          setItems(data as Item[]);
+        } else if (itemsData) {
+          const ownerIds = Array.from(new Set(itemsData.map((item) => item.owner_id).filter(Boolean)));
+          const profilesMap: Record<string, { id: string; full_name: string; hostel_block: string }> = {};
+
+          if (ownerIds.length > 0) {
+            const { data: profiles } = await supabase
+              .from("user_public_profiles")
+              .select("id, full_name, hostel_block")
+              .in("id", ownerIds);
+
+            if (profiles) {
+              profiles.forEach((p) => {
+                profilesMap[p.id] = p;
+              });
+            }
+          }
+
+          const mergedItems = itemsData.map((item) => ({
+            ...item,
+            owner: profilesMap[item.owner_id] || undefined,
+          }));
+
+          setItems(mergedItems as Item[]);
         }
       } catch (err) {
         console.error("Unexpected fetch error:", err);
