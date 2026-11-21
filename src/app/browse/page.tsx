@@ -30,7 +30,7 @@ function BrowseContent() {
           .select(
             `
             *,
-            owner:user_public_profiles (
+            owner:user_public_profiles!items_owner_id_fkey (
               id,
               full_name,
               hostel_block

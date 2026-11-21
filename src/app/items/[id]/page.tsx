@@ -75,7 +75,7 @@ export default function ItemDetailPage() {
           .select(
             `
             *,
-            owner:user_public_profiles (
+            owner:user_public_profiles!items_owner_id_fkey (
               id,
               full_name,
               hostel_block
@@ -96,7 +96,7 @@ export default function ItemDetailPage() {
             .from("ratings")
             .select(`
               *,
-              rater:user_public_profiles(full_name)
+              rater:user_public_profiles!ratings_rater_id_fkey(full_name)
             `)
             .eq("ratee_id", itemData.owner_id)
             .order("created_at", { ascending: false });

@@ -83,7 +83,7 @@ export default function MyBorrowsPage() {
           *,
           item:items(
             *,
-            owner:counterparty_users(*)
+            owner:counterparty_users!items_owner_id_fkey(*)
           ),
           deposit:deposits(*),
           ratings(*)

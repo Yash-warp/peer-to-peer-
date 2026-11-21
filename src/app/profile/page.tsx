@@ -76,7 +76,7 @@ export default function ProfilePage() {
         .from("ratings")
         .select(`
           *,
-          rater:user_public_profiles(full_name, hostel_block)
+          rater:user_public_profiles!ratings_rater_id_fkey(full_name, hostel_block)
         `)
         .eq("ratee_id", user.id)
         .order("created_at", { ascending: false });

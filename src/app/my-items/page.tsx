@@ -79,7 +79,7 @@ export default function MyItemsPage() {
           .from("requests")
           .select(`
             *,
-            borrower:counterparty_users(*),
+            borrower:counterparty_users!requests_borrower_id_fkey(*),
             deposit:deposits(*),
             ratings(*)
           `)

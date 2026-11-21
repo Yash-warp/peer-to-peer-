@@ -300,3 +300,17 @@ CREATE POLICY "Users can delete their item photos"
   TO authenticated
   USING (bucket_id = 'item-photos' AND (storage.foldername(name))[1] = auth.uid()::text);
 
+
+
+-- --------------------------------------------------------------------
+-- 7. SECURITY & PRIVACY VIEWS
+-- --------------------------------------------------------------------
+-- Public profile view (hides private phone number from general browsing)
+CREATE OR REPLACE VIEW public.user_public_profiles AS
+SELECT id, full_name, hostel_block, created_at
+FROM public.users;
+
+-- Counterparty users view (for transaction counterparties)
+CREATE OR REPLACE VIEW public.counterparty_users AS
+SELECT id, full_name, hostel_block, phone, upi_id, created_at
+FROM public.users;
